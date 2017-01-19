@@ -47,10 +47,10 @@ BaseZ = 0.1;
 
 FrameRailWidth = 0.15;
 
-MountX = 0.25;
+MountX = 0.22;
 MountY = 0.7;
 MountZ = 0.950;
-MountPos = [ [0.335, 0.5 * (BaseY - MountY), 0], [2.23, 0.5 * (BaseY - MountY), 0] ];
+MountPos = [ [0.415, 0.5 * (BaseY - MountY), 0], [2.31, 0.5 * (BaseY - MountY), 0] ];
 
 // My printer undersizes round Z axis holes by about this much.
 HoleCorrection = 0.013;
@@ -61,7 +61,7 @@ CenterHoleDia = 1.6;
 // the base is really a square with an extension off the end of the right edge.
 CenterHolePos = [0.5*BaseY, 0.5*BaseY, 0]; 
 
-ServoCenterOffsetX = 0.585; 
+ServoCenterOffsetX = 0.505; 
 ServoCenterYSpace = 0.4;
 ServoCenterXSpace = 1.9; 
 ServoMountHoleDia = 0.08; 
@@ -115,6 +115,16 @@ SlugKeyDia = 0.18 + PegCorrection;
 BearingOuterDia = 0.5;
 BearingInnerDia = 0.25;
 BearingHoleDepth = 0.3;
+
+// These are the dimensions for the servo puck
+// that pushes the slug's wings
+PuckDiameter = 0.82;
+PuckHeight = 0.225;
+PuckKeyHeight = 0.2;
+PuckKeyAngle = 60;
+PuckScrewHole = 0.125;
+PuckSplineHole = 0.25;
+PuckSplineHoleDepth = 0.15;
 
 
 // given a list of positions, subtract each of the objects
@@ -253,6 +263,28 @@ module Slug() {
     SlugBody();
 }
 
+module Puck() {
+   difference() {
+       union() {
+           translate([0,0,0.5*PuckHeight])
+	       cylinder(d=PuckDiameter, h = PuckHeight, center=true);
+	   translate([0,0,1.0 * PuckHeight-0.01])	       
+	       difference() {
+	           intersection() {
+	               cylinder(d=PuckDiameter, h = PuckHeight, center=true);
+		       translate([0,0,-PuckHeight])
+		           cube([PuckDiameter, PuckDiameter, 5 * PuckHeight]);
+		       translate([0,0,-PuckHeight])		       
+		           rotate([0,0,90-PuckKeyAngle])
+		               cube([PuckDiameter, PuckDiameter, 5 * PuckHeight]);
+                   }
+		   cylinder(d=BearingOuterDia+0.05, h = 2*PuckHeight, center=true);
+               }
+       }
+       cylinder(d=PuckScrewHole, h = 3 * PuckHeight, center=true);
+       cylinder(d=PuckSplineHole, h = 2 * PuckSplineHoleDepth, center=true);
+   }
+}
 
 scale([25.4,25.4,25.4]) {
     {
@@ -262,4 +294,9 @@ scale([25.4,25.4,25.4]) {
     }
     translate([0,0,CapOffsetZ])
         color("aqua") WGCap();
+
+    translate([3,3,0])
+        color("grey") Puck();
+
+
 }
