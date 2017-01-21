@@ -121,12 +121,12 @@ BearingHoleDepth = 0.3;
 // that pushes the slug's wings
 PuckDiameter = 0.82;
 PuckHeight = 0.215;
-PuckKeyHeight = 0.26; // added some height to get a good hit on the slug
+PuckKeyHeight = 0.4; // added some height to get a good hit on the slug
 PuckKeyAngle = 40;  // 60 requires some finesse -- running stop to stop will bind.
 PuckScrewHole = 0.125;
 PuckSplineHole = 0.245;
 PuckSplineHoleDepth = 0.14;
-
+PuckOffsetZ = SlugZ + PuckHeight + 0.075;
 
 // given a list of positions, subtract each of the objects
 // from the first object. 
@@ -148,6 +148,14 @@ module ZPost(dia, depth, pos) {
         translate([0,0,0.01])
             rotate([0, 0, 90])
 	        cylinder(d=dia, h=depth+0.02, center=true);
+}
+
+DummyServoZBump = 0.26;
+module DummyServo()
+{
+    cube([ServoCenterXSpace, ServoCenterYSpace, 0.1]);
+    translate([ServoCenterXSpace*0.25, 0, -(DummyServoZBump)])
+        cube([ServoCenterXSpace*0.5, ServoCenterYSpace, DummyServoZBump]);
 }
 
 module WGBase() {
@@ -272,7 +280,7 @@ module Puck() {
 	   translate([0,0,1.0 * PuckHeight-0.01])	       
 	       difference() {
 	           intersection() {
-	               cylinder(d=PuckDiameter, h = PuckHeight, center=true);
+	               cylinder(d=PuckDiameter, h = PuckKeyHeight, center=true);
 		       translate([0,0,-PuckHeight])
 		           cube([PuckDiameter, PuckDiameter, 5 * PuckHeight]);
 		       translate([0,0,-PuckHeight])		       
@@ -296,8 +304,12 @@ scale([25.4,25.4,25.4]) {
     translate([0,0,CapOffsetZ])
         color("red") WGCap();
 
-    translate([3,3,0])
-        color("white") Puck();
+    translate([BaseY * 0.5, BaseY * 0.5, PuckOffsetZ])
+	rotate([0, 180, 0])
+            color("white") Puck();
+
+    translate([ServoMountLLHole[0],ServoMountLLHole[1],CapOffsetZ + MountZ])
+        DummyServo();
 
 
 }
