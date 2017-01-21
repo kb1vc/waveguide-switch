@@ -50,7 +50,8 @@ FrameRailWidth = 0.15;
 MountX = 0.22;
 MountY = 0.7;
 MountZ = 0.950;
-MountPos = [ [0.415, 0.5 * (BaseY - MountY), 0], [2.31, 0.5 * (BaseY - MountY), 0] ];
+// was 0.415
+MountPos = [ [0.380, 0.5 * (BaseY - MountY), 0], [2.31, 0.5 * (BaseY - MountY), 0] ];
 
 // My printer undersizes round Z axis holes by about this much.
 HoleCorrection = 0.013;
@@ -59,9 +60,9 @@ PegCorrection = 0.01;
 
 CenterHoleDia = 1.6; 
 // the base is really a square with an extension off the end of the right edge.
-CenterHolePos = [0.5*BaseY, 0.5*BaseY, 0]; 
+CenterHolePos = [0.5*BaseY - 0.035, 0.5*BaseY, 0]; 
 
-ServoCenterOffsetX = 0.505; 
+ServoCenterOffsetX = 0.540; 
 ServoCenterYSpace = 0.4;
 ServoCenterXSpace = 1.9; 
 ServoMountHoleDia = 0.08; 
@@ -107,7 +108,7 @@ SlugWallThickness = 0.065;
 SlugOuterDia = SlugInnerDia + 2 * SlugWallThickness;
 SlugTopDia = CenterHoleDia; // - 0.05;
 SlugInnerDepth = 0.125;
-SlugZ = CapOffsetZ + StopBoxZ; // SlugInnerDepth + SlugWallThickness; 
+SlugZ = CapOffsetZ + StopBoxZ - 0.05; // give a little relief to avoid fouling the puck
 SlugKeyLength = 0.125;
 SlugKeyDia = 0.18 + PegCorrection;
 
@@ -119,12 +120,12 @@ BearingHoleDepth = 0.3;
 // These are the dimensions for the servo puck
 // that pushes the slug's wings
 PuckDiameter = 0.82;
-PuckHeight = 0.225;
-PuckKeyHeight = 0.2;
-PuckKeyAngle = 60;
+PuckHeight = 0.215;
+PuckKeyHeight = 0.26; // added some height to get a good hit on the slug
+PuckKeyAngle = 40;  // 60 requires some finesse -- running stop to stop will bind.
 PuckScrewHole = 0.125;
-PuckSplineHole = 0.25;
-PuckSplineHoleDepth = 0.15;
+PuckSplineHole = 0.245;
+PuckSplineHoleDepth = 0.14;
 
 
 // given a list of positions, subtract each of the objects
@@ -182,9 +183,9 @@ module FrameBoxHoles() {
   slot0x = MountPos[0].x - FrameRailWidth;
   slot0ypos = ScrewHoleLLPos.y * 2;
   slot0y = BaseY - 2 * slot0ypos; 
-  translate([FrameRailWidth, slot0ypos,-0.01]) {
-      cube([MountPos[0].x - FrameRailWidth, slot0y, 2 * BaseZ]);
-  }
+  //translate([FrameRailWidth, slot0ypos,-0.01]) {
+  //    cube([MountPos[0].x - FrameRailWidth, slot0y, 2 * BaseZ]);
+  //}
   translate([0,0,-0.01]) {
       triX = ScrewHoleLRPos.x + ScrewHoleDia;
       triY = 0.5 * (BaseY - MountY);
@@ -290,13 +291,13 @@ scale([25.4,25.4,25.4]) {
     {
         translate([BaseY * 0.5, BaseY * 0.5, 0])
 	rotate([0,0,-90])
-            Slug();
+            color("grey") Slug();
     }
     translate([0,0,CapOffsetZ])
-        color("aqua") WGCap();
+        color("red") WGCap();
 
     translate([3,3,0])
-        color("grey") Puck();
+        color("white") Puck();
 
 
 }
