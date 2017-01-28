@@ -42,6 +42,9 @@ $fn=32;
 // the base plate that is screwed to the top
 // of the waveguide switch
 BaseX = 2.6;
+// for reasons I can't recall BaseX is involved in the positioning of
+// the slug's magnet boxes.. go figure.
+BaseXOuter = 2.8;
 BaseY = 2.1;
 BaseZ = 0.1;
 
@@ -56,7 +59,7 @@ MountPos = [ [0.380, 0.5 * (BaseY - MountY), 0], [2.31, 0.5 * (BaseY - MountY), 
 // My printer undersizes round Z axis holes by about this much.
 HoleCorrection = 0.013;
 // and it undersizes z axis pegs by about this much.
-PegCorrection = 0.01; 
+PegCorrection = 0.005; 
 
 CenterHoleDia = 1.6; 
 // the base is really a square with an extension off the end of the right edge.
@@ -128,6 +131,12 @@ PuckSplineHole = 0.245;
 PuckSplineHoleDepth = 0.14;
 PuckOffsetZ = SlugZ + PuckHeight + 0.075;
 
+CaseWallThickness = 0.1; 
+LidInsideHeight = 2.1;
+LidOutsideHeight = LidInsideHeight + CaseWallThickness;
+LidScrewReliefDia = 0.25;
+LidScrewReliefBox = 0.3;
+
 // given a list of positions, subtract each of the objects
 // from the first object. 
 module DrillZ() {
@@ -160,7 +169,7 @@ module DummyServo()
 
 module WGBase() {
     union() {
-        cube([BaseX,BaseY,BaseZ]);
+        cube([BaseXOuter,BaseY,BaseZ]);
         for(p = MountPos) {
             translate(p) 
                 cube([MountX, MountY, MountZ]);
@@ -198,8 +207,8 @@ module FrameBoxHoles() {
       triX = ScrewHoleLRPos.x + ScrewHoleDia;
       triY = 0.5 * (BaseY - MountY);
       linear_extrude(height=BaseZ*2) {
-          polygon(points = [ [triX, -0.01], [BaseX + 0.01, 0], [BaseX + 0.01, triY] ] );
-          polygon(points = [ [triX, BaseY + 0.01], [BaseX + 0.01, BaseY + 0.01], [BaseX + 0.01, BaseY - triY] ] );
+          polygon(points = [ [triX, -0.01], [BaseXOuter + 0.01, 0], [BaseXOuter + 0.01, triY] ] );
+          polygon(points = [ [triX, BaseY + 0.01], [BaseXOuter + 0.01, BaseY + 0.01], [BaseXOuter + 0.01, BaseY - triY] ] );
       }
 
   }
@@ -295,6 +304,60 @@ module Puck() {
    }
 }
 
+// now the Lid
+
+module LidOuter(p) {
+    linear_extrude(height=LidOutsideHeight)
+        polygon(points=p);
+}
+
+module Lid() {
+    triX = 0.01 + ScrewHoleLRPos.x + ScrewHoleDia; 
+    triY = 0.5 * (BaseY - MountY);
+    outerP = [ [ 0, 0 ], [triX, 0], [BaseXOuter + 0.01, triY], 
+                             [ BaseXOuter + 0.01, BaseY - triY ],
+			     [ triX, BaseY + 0.01 ], [ 0, BaseY + 0.01] ];
+    cwt = CaseWallThickness; 
+    innerP = outerP + [ [cwt, cwt], [0, cwt], [-cwt, 0],
+                        [-cwt, -cwt],
+			[0, -cwt], [cwt, -cwt] ];
+    xd = LidScrewReliefDia + cwt * 2;
+    yd = xd;
+    difference() {
+        union() {
+            difference() {
+                LidOuter(outerP);
+
+                translate([0,0,-cwt])
+    	            linear_extrude(height=LidOutsideHeight)
+	                polygon(points=innerP);
+            }
+
+	    intersection() {        
+                LidOuter(outerP);
+                union() {
+                    for(p = ScrewHolesPos) {
+                         translate(p - [0.5 * xd, 0.5 * yd, 0])
+ 	                     cube([xd, yd, LidOutsideHeight]);
+			 //translate(p + [0, 0, 0.5 * LidOutsideHeight])
+			 //    cylinder(d=xd, h=1.1 * LidOutsideHeight, center=true);
+
+	            }
+	        }
+            }
+	}
+
+	for(p = ScrewHolesPos) {
+	    translate(p + [-0.5*LidScrewReliefBox, -0.5 * LidScrewReliefBox, cwt])
+	        cube([LidScrewReliefBox, LidScrewReliefBox, LidOutsideHeight]);
+	        //cylinder(d=LidScrewReliefDia, h=LidOutsideHeight, center=true);
+            translate(p + [0,0,0.0*LidOutsideHeight])
+	        cylinder(d=ServoMountHoleDia, h=LidOutsideHeight, center=true);
+	}
+    }
+}
+
+
 scale([25.4,25.4,25.4]) {
     {
         translate([BaseY * 0.5, BaseY * 0.5, 0])
@@ -311,5 +374,7 @@ scale([25.4,25.4,25.4]) {
     translate([ServoMountLLHole[0],ServoMountLLHole[1],CapOffsetZ + MountZ])
         DummyServo();
 
+    translate([0, 0, 2.5 + CapOffsetZ])
+        color("grey") Lid();
 
 }
