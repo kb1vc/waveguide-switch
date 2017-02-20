@@ -50,6 +50,14 @@ BaseZ = 0.1;
 
 FrameRailWidth = 0.15;
 
+TO220X = 0.45;
+TO220Y = 0.75;
+TO220Z = 0.175;
+TO220TabZ = 0.050; 
+TO220BodyY = 0.4;
+RegOffsetX = 1.75;
+RegOffsetY = 1.45;
+
 MountX = 0.22;
 MountY = 0.7;
 MountZ = 0.950;
@@ -137,6 +145,11 @@ LidOutsideHeight = LidInsideHeight + CaseWallThickness;
 LidScrewReliefDia = 0.25;
 LidScrewReliefBox = 0.3;
 
+WireHoleDia = 0.25;
+WireHoleZ = LidOutsideHeight * 0.75;
+WireHoleY = BaseY * 0.5;
+WireHoleX = BaseXOuter - 0.4;
+
 // given a list of positions, subtract each of the objects
 // from the first object. 
 module DrillZ() {
@@ -168,15 +181,38 @@ module DummyServo()
 }
 
 module WGBase() {
-    union() {
+    difference() {
+      union() {
         cube([BaseXOuter,BaseY,BaseZ]);
         for(p = MountPos) {
             translate(p) 
                 cube([MountX, MountY, MountZ]);
         }
+      }
+      Cutout7805();
     }
     
 }
+
+module Cutout7805() {
+    // cutout for mounting LM7805 regulator to slug.
+
+    translate([RegOffsetX, RegOffsetY, -0.01]) {
+      difference() {
+        cube([TO220X,TO220Y,BaseZ + 0.05]);
+        translate([0,TO220BodyY, TO220TabZ])
+          cube([TO220X,TO220Y - TO220BodyY, 0.01 + BaseZ - TO220TabZ]);
+      }
+    }
+}
+
+module Cutout7805Upper() {
+    // cutout for 7805 body in upper cap.
+    translate([RegOffsetX, RegOffsetY, -0.01]) {    
+        cube([TO220X,TO220BodyY,BaseZ + 0.05]);
+    }
+}
+
 
 module CenterHole() {
     xd = MountPos[0].x;
@@ -352,8 +388,15 @@ module Lid() {
 	        cube([LidScrewReliefBox, LidScrewReliefBox, LidOutsideHeight]);
 	        //cylinder(d=LidScrewReliefDia, h=LidOutsideHeight, center=true);
             translate(p + [0,0,0.0*LidOutsideHeight])
-	        cylinder(d=ServoMountHoleDia, h=LidOutsideHeight, center=true);
+	        cylinder(d=ScrewHoleDia, h=LidOutsideHeight, center=true);
 	}
+
+        translate([WireHoleX, WireHoleY, WireHoleZ]) {
+	    rotate([0, 90, 0])
+	        cylinder(d=WireHoleDia, h=0.8);
+        }
+
+	Cutout7805Upper();
     }
 }
 
