@@ -36,6 +36,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 // All dimensions are in inches -- scaling to mm is at the end.
+use<TCRT5000_Mount.scad>
 
 $fn=32;
 
@@ -117,6 +118,7 @@ CapOffsetZ = 0.7;
 SlugInnerDia = 0.75 + HoleCorrection;
 SlugWallThickness = 0.065;
 SlugOuterDia = SlugInnerDia + 2 * SlugWallThickness;
+SlugLimitDia = CenterHoleDia - 0.125;
 SlugTopDia = CenterHoleDia; // - 0.05;
 SlugInnerDepth = 0.125;
 SlugZ = CapOffsetZ + StopBoxZ - 0.05; // give a little relief to avoid fouling the puck
@@ -180,6 +182,11 @@ module DummyServo()
         cube([ServoCenterXSpace*0.5, ServoCenterYSpace, DummyServoZBump]);
 }
 
+module SensorMounts() {
+    translate([StopBoxOffsetX + StopBoxX - TCRT5000_Z_in(),StopBoxOffsetY + StopBoxY,BaseZ]) rotate([0,270,0]) TCRT5000_Mount_in();
+    translate([StopBoxOffsetX + StopBoxX - TCRT5000_Z_in(),StopBoxOffsetY - TCRT5000_Y_in(), BaseZ]) rotate([0,270,0]) TCRT5000_Mount_in(); 
+}
+
 module WGBase() {
     difference() {
       union() {
@@ -188,6 +195,7 @@ module WGBase() {
             translate(p) 
                 cube([MountX, MountY, MountZ]);
         }
+	SensorMounts();
       }
       Cutout7805();
     }
@@ -314,7 +322,11 @@ module SlugBody() {
 }
 
 module Slug() {
-    SlugBody();
+    // we want to limit the slug body diameter
+    intersection() {
+      SlugBody();
+      cylinder(d=SlugLimitDia, h=SlugZ);
+   }
 }
 
 module Puck() {
