@@ -112,7 +112,8 @@ BoxWallWidth = 0.065;
 BoxRelief = 0.01;
 
 // this is the height of the cap above the bottom of the switch well. 
-CapOffsetZ = 0.7; 
+CapOffsetZ = 0.7;
+
 
 // Now the slug parts
 SlugInnerDia = 0.75 + HoleCorrection;
@@ -151,6 +152,13 @@ WireHoleDia = 0.25;
 WireHoleZ = LidOutsideHeight * 0.75;
 WireHoleY = BaseY * 0.5;
 WireHoleX = BaseXOuter - 0.4;
+
+CutoutX = 1.0;
+CutoutY = 1.0;
+CutoutZ = CaseWallThickness;
+
+MiniDINDia = 0.551;
+MiniDINIntrusion = 0.395;
 
 // given a list of positions, subtract each of the objects
 // from the first object. 
@@ -200,6 +208,44 @@ module WGBase() {
       Cutout7805();
     }
     
+}
+
+module CutoutCommon(thickness_offset, z_offset) {
+    translate([CaseWallThickness+thickness_offset,0.5*(BaseY-CutoutY),-(z_offset)])
+        rotate([0,-90,0]) {
+	    cube([CutoutX, CutoutY, CaseWallThickness + 2 * thickness_offset]);
+    }
+}
+
+module CutoutLidTabs() {
+    TabWidth = CutoutX - 0.4; 
+    translate([CaseWallThickness,0.5*(BaseY - CutoutY - 0.1),CaseWallThickness + 0.1])
+        cube([0.1,0.1,TabWidth]);
+    translate([CaseWallThickness,0.5*(BaseY + CutoutY - 0.1),CaseWallThickness + 0.1])
+        cube([0.1,0.1,TabWidth]);
+}
+
+module CutoutLid() {
+    CutoutCommon(0.01, BaseZ);
+}
+
+module CutoutBase() {
+    TabWidth = CutoutY - 0.4;
+    difference() {
+        union() {
+            CutoutCommon(0, 0);
+	    translate([CaseWallThickness,0.5*(BaseY - TabWidth),CutoutX - 0.05])
+	        cube([0.1,TabWidth, 0.1]);
+	}
+
+    }
+}
+
+module MiniDINConn() {
+    // cutout for 4 pin mini din (md-04cv)
+    translate([0.5*MiniDINIntrusion-0.01, 0.5*BaseY, 0.5*CutoutX])
+    rotate([0,90,0])
+        cylinder(d=MiniDINDia, h=MiniDINIntrusion, center=true);
 }
 
 module Cutout7805() {
@@ -409,18 +455,28 @@ module Lid() {
         }
 
 	Cutout7805Upper();
+	CutoutLid();
     }
+    CutoutLidTabs();    
 }
 
 
-scale([25.4,25.4,25.4]) {
-    {
-        translate([BaseY * 0.5, BaseY * 0.5, 0])
+module WGSwitch() {
+
+    translate([BaseY * 0.5, BaseY * 0.5, 0])
 	rotate([0,0,-90])
             color("grey") Slug();
-    }
+
     translate([0,0,CapOffsetZ])
-        color("red") WGCap();
+    {
+        difference() {
+            union() {
+                color("red") WGCap();
+                color("red") CutoutBase();
+	    }
+	    MiniDINConn();
+	}
+    }
 
     translate([BaseY * 0.5, BaseY * 0.5, PuckOffsetZ])
 	rotate([0, 180, 0])
@@ -429,7 +485,18 @@ scale([25.4,25.4,25.4]) {
     translate([ServoMountLLHole[0],ServoMountLLHole[1],CapOffsetZ + MountZ])
         DummyServo();
 
-    translate([0, 0, 2.5 + CapOffsetZ])
-        color("grey") Lid();
+    translate([0, 0, BaseZ + 2.51 + CapOffsetZ])
+    {   
+	     color("grey") Lid();
+    }
 
+}
+
+
+scale([25.4,25.4,25.4]) {
+    difference() {
+        WGSwitch();
+	//translate([-1,1,-1])
+	  //  cube([8,8,8]);
+    }
 }
