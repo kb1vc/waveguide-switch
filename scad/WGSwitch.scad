@@ -482,10 +482,10 @@ module WGSwitch() {
 	rotate([0, 180, 0])
             color("white") Puck();
 
-    translate([ServoMountLLHole[0],ServoMountLLHole[1],CapOffsetZ + MountZ])
-        DummyServo();
+    // translate([ServoMountLLHole[0],ServoMountLLHole[1],CapOffsetZ + MountZ])
+    //    DummyServo();
 
-    translate([0, 0, BaseZ + 2.51 + CapOffsetZ])
+    translate([0, 0, BaseZ + 1.01 + CapOffsetZ])
     {   
 	     color("grey") Lid();
     }
