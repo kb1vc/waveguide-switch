@@ -148,6 +148,7 @@ LidOutsideHeight = LidInsideHeight + CaseWallThickness;
 LidScrewReliefDia = 0.25;
 LidScrewReliefBox = 0.3;
 
+// removed -- replaced by DIN connector
 WireHoleDia = 0.25;
 WireHoleZ = LidOutsideHeight * 0.75;
 WireHoleY = BaseY * 0.5;
@@ -219,9 +220,9 @@ module CutoutCommon(thickness_offset, z_offset) {
 
 module CutoutLidTabs() {
     TabWidth = CutoutX - 0.4; 
-    translate([CaseWallThickness,0.5*(BaseY - CutoutY - 0.1),CaseWallThickness + 0.1])
+    translate([CaseWallThickness - 0.001,0.5*(BaseY - CutoutY - 0.1),CaseWallThickness + 0.1])
         cube([0.1,0.1,TabWidth]);
-    translate([CaseWallThickness,0.5*(BaseY + CutoutY - 0.1),CaseWallThickness + 0.1])
+    translate([CaseWallThickness - 0.001,0.5*(BaseY + CutoutY - 0.1),CaseWallThickness + 0.1])
         cube([0.1,0.1,TabWidth]);
 }
 
@@ -449,10 +450,10 @@ module Lid() {
 	        cylinder(d=ScrewHoleDia, h=LidOutsideHeight, center=true);
 	}
 
-        translate([WireHoleX, WireHoleY, WireHoleZ]) {
-	    rotate([0, 90, 0])
-	        cylinder(d=WireHoleDia, h=0.8);
-        }
+        //translate([WireHoleX, WireHoleY, WireHoleZ]) {
+	//    rotate([0, 90, 0])
+	//        cylinder(d=WireHoleDia, h=0.8);
+        //}
 
 	Cutout7805Upper();
 	CutoutLid();
