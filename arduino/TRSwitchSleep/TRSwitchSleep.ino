@@ -30,8 +30,8 @@ int actuator_delay = 750; // in mS
 #define RX_Sense A1
 #define TX_Sense A0
 
-#define RX_Threshold 120
-#define TX_Threshold 120
+#define RX_Threshold 250
+#define TX_Threshold 250
 
 volatile int PTT_interrupt_occurred;
 volatile int PTT_pin_state;
