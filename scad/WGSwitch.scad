@@ -61,9 +61,10 @@ RegOffsetY = 1.45;
 
 MountX = 0.22;
 MountY = 0.7;
+MountConnY = 0.85;
 MountZ = 0.950;
 // was 0.415
-MountPos = [ [0.380, 0.5 * (BaseY - MountY), 0], [2.31, 0.5 * (BaseY - MountY), 0] ];
+MountPos = [ [0.380, 0.5 * (BaseY - MountConnY), 0], [2.31, 0.5 * (BaseY - MountY), 0] ];
 
 // My printer undersizes round Z axis holes by about this much.
 HoleCorrection = 0.013;
@@ -159,7 +160,10 @@ CutoutY = 1.0;
 CutoutZ = CaseWallThickness;
 
 MiniDINDia = 0.551;
-MiniDINIntrusion = 0.395;
+MiniDINIntrusion = 0.295;
+MiniDINRearDia = 0.675;
+MiniDINRearOffset = 0.75;
+MiniDINRearIntrusion = 0.495;
 
 // given a list of positions, subtract each of the objects
 // from the first object. 
@@ -200,10 +204,14 @@ module WGBase() {
     difference() {
       union() {
         cube([BaseXOuter,BaseY,BaseZ]);
-        for(p = MountPos) {
-            translate(p) 
-                cube([MountX, MountY, MountZ]);
-        }
+        translate(MountPos[0])
+	    cube([MountX, MountConnY, MountZ]);
+        translate(MountPos[1])	    
+	    cube([MountX, MountY, MountZ]);	    
+//        for(p = MountPos) {
+//            translate(p) 
+//                cube([MountX, MountY, MountZ]);
+//        }
 	SensorMounts();
       }
       Cutout7805();
@@ -247,6 +255,9 @@ module MiniDINConn() {
     translate([0.5*MiniDINIntrusion-0.01, 0.5*BaseY, 0.5*CutoutX])
     rotate([0,90,0])
         cylinder(d=MiniDINDia, h=MiniDINIntrusion, center=true);
+    translate([0.5*MiniDINRearOffset, 0.5*BaseY, 0.5*CutoutX])
+    rotate([0,90,0])
+        cylinder(d=MiniDINRearDia, h=MiniDINRearIntrusion, center=true);
 }
 
 module Cutout7805() {

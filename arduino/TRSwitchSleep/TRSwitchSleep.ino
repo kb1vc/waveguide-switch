@@ -8,7 +8,9 @@
 */ 
 
 #include <Servo.h> 
- 
+
+#include <avr/interrupt.h>
+#include <avr/sleep.h>
  
 Servo myservo;  // create servo object to control a servo 
                 // twelve servo objects can be created on most boards
@@ -31,6 +33,9 @@ int actuator_delay = 750; // in mS
 #define RX_Threshold 120
 #define TX_Threshold 120
 
+volatile int PTT_interrupt_occurred;
+volatile int PTT_pin_state;
+
 void setup() 
 { 
   myservo.attach(SERVO_PIN);  // attaches the servo on pin 9 to the servo object 
@@ -43,8 +48,32 @@ void setup()
   
   Serial.begin(19200);
   while(!Serial); 
-  
+
+  PTT_pin_state = 1;   
 } 
+
+void init_sleep()
+{
+  PTT_interrupt_occurred = 0;
+}
+
+void goto_sleep()
+{
+  set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+  noInterrupts(); // hold off interrupts while we're sleeping
+  sleep_enable();
+  attachInterrupt(digitalPinToInterrupt(SENSE_PIN), PTT_isr, CHANGE);
+  interrupts();
+  sleep_cpu(); // goto sleep.
+}
+
+void PTT_isr()
+{
+  sleep_disable();   // don't go back to sleep until we've got the interrupt handled. (prevents a race between sleep_enable and attach)
+  detachInterrupt(digitalPinToInterrupt(SENSE_PIN)); 
+  PTT_interrupt_occurred = 1;
+  PTT_pin_state = digitalRead(SENSE_PIN);
+}
 
 void readSensors()
 {
@@ -112,7 +141,6 @@ void setMode(int rx_mode) {
     myservo.write(TX_rest_pos);   
   }
   setLEDs(rx_mode);
-  
   //readSensors();
 }
 
@@ -122,24 +150,15 @@ void setPos(int pos, int rest_pos) {
   myservo.write(rest_pos);
 }
 
-int last_sense = 1; 
-
 void loop() 
 { 
-  int new_sense  = digitalRead(SENSE_PIN);
   
-  if(new_sense == last_sense) {
-    // nothing has happened. 
-    delay(100);
-    readSensors();
-  }
-  else if(new_sense) {
+  if(PTT_pin_state) {
     setMode(1);
   }
   else {
     setMode(0);
   }
-  last_sense = new_sense; 
-
+  goto_sleep();
 } 
 
