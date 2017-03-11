@@ -46,8 +46,6 @@ void setup()
   delay(500);
   setMode(1);
   
-  Serial.begin(19200);
-  while(!Serial); 
 
   PTT_pin_state = 1;   
 } 
@@ -75,20 +73,6 @@ void PTT_isr()
   PTT_pin_state = digitalRead(SENSE_PIN);
 }
 
-void readSensors()
-{
-  int rxs = analogRead(RX_Sense);
-  int txs = analogRead(TX_Sense);
-  int rxs2 = analogRead(RX_Sense);
-  int txs2 = analogRead(TX_Sense);
-  Serial.print("RXS "); 
-  Serial.print(rxs); Serial.print(' ');
-  Serial.print(rxs2);
-  Serial.print("   TXS "); 
-  Serial.print(txs); Serial.print(' ');
-  Serial.println(txs2);  
-}
-
 // return 1 for RX -1 for TX and 0 for no dice
 int checkSensors()
 {
@@ -100,8 +84,7 @@ int checkSensors()
   else if((rxs > RX_Threshold) && (txs < TX_Threshold))
     return -1;
   else {
-    Serial.print("! rxs txs = ");
-    Serial.print(rxs); Serial.print("  "); Serial.println(txs);
+
     return 0;
   }
 }
@@ -122,33 +105,41 @@ void setLEDs(int rx_mode)
  
 void setMode(int rx_mode) {
   int flag = 1; 
+  int count = 0; 
   if(rx_mode) {
+    myservo.write(RX_pos);
     while(flag) {
-      myservo.write(RX_pos);
-      delay(actuator_delay);
       checkSensors();  // read twice to spin up A/D converter
       if(checkSensors() == 1) flag = 0;
+      else {
+        count++; 
+        if(count == 10000) {
+          myservo.write(RX_pos);
+          count = 0;
+        } 
+      }
     }
     myservo.write(RX_rest_pos);
   }
   else {
-   while(flag) {
-      myservo.write(TX_pos);
+    myservo.write(TX_pos);
+    while(flag) {
       checkSensors(); // read twice to spin up A/D converter
       if(checkSensors() == -1) flag = 0;
-      else delay(actuator_delay);
+      else {
+        count++;
+        if(count == 10000) {
+          myservo.write(TX_pos);
+          count = 0; 
+        }
+      }
     }
     myservo.write(TX_rest_pos);   
   }
   setLEDs(rx_mode);
-  //readSensors();
+
 }
 
-void setPos(int pos, int rest_pos) {
-  myservo.write(pos);
-  delay(actuator_delay);
-  myservo.write(rest_pos);
-}
 
 void loop() 
 { 
