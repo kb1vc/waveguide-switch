@@ -218,6 +218,41 @@ a pair of permanent magnets.  The shaft moved a slug inside the switch.
 The switch functioned well for about ten years, but finally gasped its last
 when one of the coils melted. (It appears that the microswitch that
 handled the latching function may have gotten stuck.)
+
+I disassembled the unit to complete the forensic investigation.  A short
+examination convinced me that it was toast.  Rewinding the armature was
+not all that appealing, and I'd recently acquired some good microwave relays,
+so the broken shards sat on the shelf for a year or so, until I found the body
+of the switch while looking for something else. The notion hit me that I
+could replace the coil/magnet assembly with a R/C model airplane servo.
+These were inexpensive and easy to control with an Arduino microcontroller
+and a few lines of code.
+
+The trick was mating the servo to the keyed shaft of the waveguide switch,
+and sensing the position of the switch.  A typical servo is not very
+accurate. The control mechanism is a pulse train where the angular position
+of the servo is more-or-less proportional to the pulse width.  The more-or-less
+part meant that any positioning mechanism would need some kind of feedback
+or other scheme to make sure the waveguide slug was aligned with the input
+and output ports.
+
+As an amateur bungler, it took a number of experiments before a reasonably
+reliable method for positioning the slug was found. Figure \ref{f_trial_and_error} shows 30 or so parts that were printed on the way to a working design.
+The total cost for all the material used in the trials was less than \$10.
+
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=0.8\textwidth]{TrialAndError1.jpg}
+  \caption{\label{f_trial_and_error}Trial and Error Parts}
+\end{figure}
+
+\begin{figure}[thb]
+\centering
+    \includegraphics[width=\textwidth]{AssemblyView.pdf}
+    \caption{\label{f_expview}The Positioning Mechanism (minus the servo)}  
+\end{figure}
+
 Figure \ref{f_wg_switch_orig} shows a switch similar to the unit I started
 with.\footnote{Thanks to Dudley Lab \url{http://www.dudleylab.com/surplus6.html}
   for the image.}
@@ -236,14 +271,6 @@ The ``finished'' unit is shown in Figure \ref{f_wg_switch_new}.
     \caption{\label{f_wg_switch_new}Reclaimed unit)}      
   \end{minipage}
   \end{figure}
-
-\begin{figure}[tb]
-  \centering
-  \includegraphics[width=0.8\textwidth]{TrialAndError1.jpg}
-  \caption{Trial and Error Parts}
-  \label{f_trial_and_error}
-\end{figure}
-
 
 
 \end{document}
