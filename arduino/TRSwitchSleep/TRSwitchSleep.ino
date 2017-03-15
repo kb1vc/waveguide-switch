@@ -16,9 +16,9 @@ Servo myservo;  // create servo object to control a servo
                 // twelve servo objects can be created on most boards
  
 int RX_pos = 0;
-int RX_rest_pos = 45;
+int RX_rest_pos = 90;// was 45;
 int TX_pos = 175;
-int TX_rest_pos = 135;
+int TX_rest_pos = 90; // was 135;
 int Center = 90;
 int actuator_delay = 750; // in mS
 
@@ -35,6 +35,10 @@ int actuator_delay = 750; // in mS
 
 volatile int PTT_interrupt_occurred;
 volatile int PTT_pin_state;
+
+#define RX_MODE 1
+#define TX_MODE -1
+#define NO_MODE 0
 
 void setup() 
 { 
@@ -90,66 +94,75 @@ int checkSensors()
 }
 
 
-void setLEDs(int rx_mode)
+void setLEDs(int mode)
 {
-  if(rx_mode) {
+  if(mode == RX_MODE) {
     digitalWrite(RX_LED, HIGH);
     digitalWrite(TX_LED, LOW);
   }
-  else {
+  else if(mode == TX_MODE) {
     digitalWrite(RX_LED, LOW);
     digitalWrite(TX_LED, HIGH);
   }
+  else {
+    digitalWrite(RX_LED, LOW);
+    digitalWrite(TX_LED, LOW);
+  }
 }
 
+
  
-void setMode(int rx_mode) {
+void setMode(int mode) {
   int flag = 1; 
-  int count = 0; 
-  if(rx_mode) {
+  int count = 0;
+#warning ENABLE TX_EN EARLY OFF.
+  // UNCOMMENT THIS WHEN WE'RE DONE TESTING  setLEDs(NO_MODE); 
+  if(mode == RX_MODE) {
     myservo.write(RX_pos);
     while(flag) {
       checkSensors();  // read twice to spin up A/D converter
       if(checkSensors() == 1) flag = 0;
       else {
         count++; 
-        if(count == 10000) {
+        if(count == 100) {
           myservo.write(RX_pos);
           count = 0;
         } 
       }
     }
     myservo.write(RX_rest_pos);
+    setLEDs(RX_MODE);
   }
-  else {
+  else if (mode == TX_MODE) {
     myservo.write(TX_pos);
     while(flag) {
       checkSensors(); // read twice to spin up A/D converter
       if(checkSensors() == -1) flag = 0;
       else {
         count++;
-        if(count == 10000) {
+        if(count == 100) {
           myservo.write(TX_pos);
           count = 0; 
         }
       }
     }
     myservo.write(TX_rest_pos);   
+    setLEDs(TX_MODE);
   }
-  setLEDs(rx_mode);
 
 }
 
 
 void loop() 
 { 
-  
+  // pin state is low for TX.
   if(PTT_pin_state) {
-    setMode(1);
+    setMode(RX_MODE);
   }
   else {
-    setMode(0);
+    setMode(TX_MODE);
   }
+  delay(actuator_delay);
   goto_sleep();
 } 
 
