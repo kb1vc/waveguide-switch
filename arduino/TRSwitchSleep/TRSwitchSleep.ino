@@ -1,12 +1,31 @@
-/* Sweep
- by BARRAGAN <http://barraganstudio.com> 
- This example code is in the public domain.
+/*
+Copyright (c) 2016, Matthew H. Reilly (kb1vc)
+All rights reserved.
 
- modified 8 Nov 2013
- by Scott Fitzgerald
- http://arduino.cc/en/Tutorial/Sweep
-*/ 
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
 
+    Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+    Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the
+    distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+*/
 #include <Servo.h> 
 
 #include <avr/interrupt.h>
@@ -49,15 +68,9 @@ void setup()
   pinMode(TX_LED, OUTPUT);
   delay(500);
   setMode(1);
-  
 
   PTT_pin_state = 1;   
 } 
-
-void init_sleep()
-{
-  PTT_interrupt_occurred = 0;
-}
 
 void goto_sleep()
 {
@@ -93,7 +106,6 @@ int checkSensors()
   }
 }
 
-
 void setLEDs(int mode)
 {
   if(mode == RX_MODE) {
@@ -109,14 +121,12 @@ void setLEDs(int mode)
     digitalWrite(TX_LED, LOW);
   }
 }
-
-
  
 void setMode(int mode) {
   int flag = 1; 
   int count = 0;
-#warning ENABLE TX_EN EARLY OFF.
-  // UNCOMMENT THIS WHEN WE'RE DONE TESTING  setLEDs(NO_MODE); 
+
+  setLEDs(NO_MODE); 
   if(mode == RX_MODE) {
     myservo.write(RX_pos);
     while(flag) {
@@ -149,9 +159,7 @@ void setMode(int mode) {
     myservo.write(TX_rest_pos);   
     setLEDs(TX_MODE);
   }
-
 }
-
 
 void loop() 
 { 
