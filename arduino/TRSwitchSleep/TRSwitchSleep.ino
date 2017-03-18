@@ -27,17 +27,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 #include <Servo.h> 
-
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
  
 Servo myservo;  // create servo object to control a servo 
-                // twelve servo objects can be created on most boards
  
 int RX_pos = 0;
-int RX_rest_pos = 90;// was 45;
+int RX_rest_pos = 90;
 int TX_pos = 175;
-int TX_rest_pos = 90; // was 135;
+int TX_rest_pos = 90;
 int Center = 90;
 int actuator_delay = 750; // in mS
 

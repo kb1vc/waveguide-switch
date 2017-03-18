@@ -193,7 +193,12 @@ editor are described at \url{http://www.openscad.org/}.)
 As this project aimed to replace the rather fancy HP original components,
 the knobs had a bit of a taper to them, and a hole in the side for a
 retaining screw. Figure \ref{f_openscad} is a screenshot of an OpenSCAD
-session showing the knob. The model file is shown in Appendix \ref{a_knob_list}.
+session showing the knob. The model file is shown in Figure \ref{f_knob_list}.
+
+\begin{figure}[htbp]
+  \lstinputlisting{HP6289_inner.scad}
+  \caption{\label{f_knob_list}OpenSCAD Model of Replacement Knob}
+  \end{figure}
 
 OpenSCAD scripts can follow many forms, but my own approach is to put
 all of the important dimensions at the top of the file, and then
@@ -342,7 +347,9 @@ The Pro Mini is availble in both 3.3V and 5V versions.  This controller uses the
 
 Once assembled, the controlling sketch may be downloaded into the module using a
 USB to serial adapter from Sparkfun. (\url{https://www.sparkfun.com/products/9716})
-The sketch is found in the design package under {\tt ../arduino/TRSwitchSleep/TRSwitchSleep.ino}.
+
+The sketch is found in the design package under {\tt ../arduino/TRSwitchSleep}
+and its current version is shown in Appendix \ref{a_sketch}. 
 This sketch senses changes on the PTT input and activates the servo.
 The servo is driven to its limit until the IR sensors mounted on the base indicate
 that the positioner vane is pushing against the stop block. 
@@ -394,8 +401,9 @@ reliable as a 2D inkjet printer.
 
 
 Once the parts have been printed, they should be ``tidied up'' with
-a sharp knife here and there.  Assembly is fairly straightforward.
+a sharp knife here and there.  
 The switch controller, {\em sans} lid is shown in Figure \ref{f_naked_switch}.
+Assembly is fairly straightforward.
 
 \begin{enumerate}
 \setlength\itemsep{0em}  
@@ -497,14 +505,17 @@ tools are available to any bungler.
 \clearpage
 
 \begin{appendices}
-\section{\label{a_knob_list}OpenSCAD Model of Replacement Knob}
-\lstinputlisting{HP6289_inner.scad}
+%%\section{\label{a_knob_list}OpenSCAD Model of Replacement Knob}
+%%\lstinputlisting{HP6289_inner.scad}
 
 \section{\label{a_controller_module}The Servo Controller Module}
 \begin{figure}[h] 
   \centering
   \includegraphics[width=0.75\linewidth,keepaspectratio]{WGSwitch.pdf}
-\end{figure}
+\end{figure} 
+\clearpage
+\section{\label{a_sketch}The Controller Arduino Sketch}
+\lstinputlisting{../arduino/TRSwitchSleep/TRSwitchSleep.ino}
 %%\newpage
 %%\newgeometry{top=1cm,bottom=1cm,left=1cm,right=1cm}
 %%\section{\label{a_controller_mdoule}The Servo Controller Module}
