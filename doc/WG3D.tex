@@ -127,7 +127,7 @@ printer to finish.\footnote{The knobs were very small and simple. They
 It took two tries to get the design right. Had I
 been paying attention, it could have been right the first time.
 But having the printer in the shack
-means that I got through two iterations in less than an hour.
+meant that I got through two iterations in less than an hour.
 And no metal waste got stuck in the carpet. 
 
 \begin{figure}[tb]
@@ -185,7 +185,7 @@ scripts describe three dimensional things by building them
 up from simple solids like cubes, spheres, cylinders, and cones.
 Shapes can be added or subtracted, so that a simple knob can be
 described as an outer cylinder minus an inner cylinder.  The inner
-cylinder is the hole for the shaft. OpenSCAD allows the designer to
+cylinder is the hole for the salvaged shaft collar. OpenSCAD allows the designer to
 view an object on screen and to translate scripts into STL (stereo-lithography)
 files for later processing. (The description language and the OpenSCAD
 editor are described at \url{http://www.openscad.org/}.)
@@ -207,11 +207,12 @@ it was useful to describe the shaft diameter (line 2),
 the minimum wall thickness (line 3), the length of the knob (line 5),
 the set screw (lines 6 and 7), and the depth of cut for the knurling (line 8).
 
-The knob itself comprises a body, a hole for the shaft, a hole for the
-setscrew, and the knurling.  These are all assembled in the last module
-{\tt HP6289\_Inner}. The module is actually expanded in lines 39 and 40.
-OpenSCAD's default unit is the millimeter, but I tend to measure in
-imperial units, so line 39 translates from inches to mm. 
+The knob itself comprises a body, a hole for the shaft collar, a hole
+for the setscrew, and the knurling.  These are all assembled in the
+last module {\tt HP6289\_Inner}. The module is actually expanded in
+lines 39 and 40.  OpenSCAD's default unit is the millimeter, but I
+tend to measure in imperial units, so line 39 translates from inches
+to mm.
 
 \begin{figure}[tb]
   \centering
@@ -228,9 +229,10 @@ imperial units, so line 39 translates from inches to mm.
 \end{figure}
 
 
-A pleasant evening of head-scratching and printing produced the two knobs
-shown in Figure \ref{f_knobs_on_box}.  The result won't be mistaken for
-original parts, but the supply is a tool in a workshop, not a museum display. 
+A pleasant evening of head-scratching and printing produced the two
+knobs shown in Figure \ref{f_knobs_on_box}.  The result won't be
+mistaken for original parts, but the power supply is a tool in a
+workshop, not a museum display.
 
 \section{The Waveguide Switch}
 
@@ -257,10 +259,12 @@ The ``finished'' unit is shown in Figure \ref{f_wg_switch_new}.
 \begin{figure}[tb]
   \centering
   \begin{minipage}[b]{0.4\textwidth}
+    \centering
     \includegraphics[width=\textwidth]{wr-90-s1.jpg}
-    \caption{\label{f_wg_switch_orig}Original switch}  
+    \caption{\label{f_wg_switch_orig}Original switch (+/-)}  
   \end{minipage}
   \begin{minipage}[b]{0.4\textwidth}
+    \centering
     \includegraphics[width=\textwidth]{WGFinal.jpg}
     \caption{\label{f_wg_switch_new}Reclaimed unit}      
   \end{minipage}
@@ -327,7 +331,8 @@ The design package can be downloaded from github at \url{https://github.com/kb1v
 It would be surprising if anyone actually built exactly this module,
 as it will likely require some modification for each type of waveguide
 switch.  Nevertheless, the assembly instructions are provided here to
-serve as a starting point for others.
+serve as a starting point for others. Assembly directions are tedious
+and make for lousy reading.  You've been warned. 
 
 \subsection{The Arduino Controller}
 
@@ -380,7 +385,7 @@ To print the components:
 \item Save the gcode file as {\tt WGSwitchBase.gcode}.
 \item Quit Cura, then repeat steps 2 and 3.
 \item Delete all the parts except the lid.
-\item Flip the lid over so that it's open part faces up.
+\item Flip the lid over so that its open part faces up.
 \item Save the gcode file as {\tt WGSwitchLid.gcode}.
 \item Copy each of the gcode files to your 3D printer.
 \item For best results, print the all components in black.
@@ -402,7 +407,7 @@ reliable as a 2D inkjet printer.
 
 Once the parts have been printed, they should be ``tidied up'' with
 a sharp knife here and there.  
-The switch controller, {\em sans} lid is shown in Figure \ref{f_naked_switch}.
+The switch controller, {\em sans} lid, is shown in Figure \ref{f_naked_switch}.
 Assembly is fairly straightforward.
 
 \begin{enumerate}
@@ -453,7 +458,7 @@ Assembly is fairly straightforward.
     \end{center}
 There are lots of choices for preparing 3D models
 for printing.  I prefer to use open source software.
-Of the open source choices, I've used two.  FreeCAD
+Of the open source choices, I've used two:  FreeCAD
 and OpenSCAD. 
 
 FreeCAD is an open source alternative to the traditional
@@ -463,7 +468,7 @@ tools.  It provides a rich set of ``workbenches'' that
 assist in creating parts, assemblies, and 2D drawings.
 It is under active development, and has a support community.
 
-OpenSCAD, uses a script based approach to create constructive
+OpenSCAD uses a script based approach to create constructive
 solid geometry  models.  It is extremely powerful, and capable
 of describing just about any physically realizable shape.
 
@@ -491,31 +496,39 @@ allows the user to create models and download them for printing on a
 \clearpage
 \section{Final Thoughts}
 
-This is all presented as bait.  The arrival on the market of
+
+The arrival on the market of
 an inexpensive 3D printer, and the well established Arduino
 culture have given hams a new set of tools.  Experiments are
 cheap and take far less time than traditional machine-shop
 ventures. The project described here was done over a few
 widely spaced weekends, despite the dozens of experiments
-and refinements along the way.
+and refinements along the way. 
 
-Building it was fun. It produced a usable device. And the
+Building it was fun. The trial-and-error-and-error approach
+took advantage of the low cost of each print.
+The CAD tools allowed progressive refinement.
+The minimal investment for each design iteration meant
+that ``throw it out and start over'' was always an option.
+The printer produced a usable device. And the
 tools are available to any bungler.
 
 \clearpage
 
 \begin{appendices}
-%%\section{\label{a_knob_list}OpenSCAD Model of Replacement Knob}
-%%\lstinputlisting{HP6289_inner.scad}
 
+\section{\label{a_sketch}The Controller Arduino Sketch}
+\lstinputlisting{../arduino/TRSwitchSleep/TRSwitchSleep.ino}
+
+\clearpage
+\newgeometry{top=1cm,bottom=1cm,left=1cm,right=1cm}
 \section{\label{a_controller_module}The Servo Controller Module}
 \begin{figure}[h] 
   \centering
   \includegraphics[width=0.75\linewidth,keepaspectratio]{WGSwitch.pdf}
 \end{figure} 
-\clearpage
-\section{\label{a_sketch}The Controller Arduino Sketch}
-\lstinputlisting{../arduino/TRSwitchSleep/TRSwitchSleep.ino}
+
+
 %%\newpage
 %%\newgeometry{top=1cm,bottom=1cm,left=1cm,right=1cm}
 %%\section{\label{a_controller_mdoule}The Servo Controller Module}
